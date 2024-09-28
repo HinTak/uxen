@@ -183,7 +183,7 @@ static void uxenstor_softirq(unsigned long opaque)
             spin_lock(&uxstor->lk_seq_map);
             idr_remove(&uxstor->seq_map, req_id);
             spin_unlock(&uxstor->lk_seq_map);
-            sc->scsi_done(sc);
+            scsi_done(sc);
             wake_up(&uxstor->wq);
         }
     }
