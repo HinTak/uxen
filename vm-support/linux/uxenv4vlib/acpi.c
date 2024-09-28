@@ -40,9 +40,9 @@ static int acpi_driver_add(struct acpi_device *device)
     return ret;
 }
 
-static int acpi_driver_remove(struct acpi_device *device)
+static void acpi_driver_remove(struct acpi_device *device)
 {
-    return 0;
+    return;
 }
 
 static const struct acpi_device_id device_ids[] = {
@@ -58,7 +58,6 @@ static struct acpi_driver uxenv4v_driver = {
         .add =      acpi_driver_add,
         .remove =   acpi_driver_remove,
     },
-    .owner =        THIS_MODULE,
 };
 
 int acpi_init_irq_line(void)
