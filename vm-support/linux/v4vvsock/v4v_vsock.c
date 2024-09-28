@@ -584,8 +584,10 @@ static const struct proto_ops vsock_dgram_ops = {
     .ioctl = sock_no_ioctl,
     .listen = sock_no_listen,
     .shutdown = sock_no_shutdown,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
     .setsockopt = sock_no_setsockopt,
     .getsockopt = sock_no_getsockopt,
+#endif
     .sendmsg = vsock_sendmsg,
     .recvmsg = vsock_recvmsg,
     .mmap = sock_no_mmap,

@@ -16,6 +16,7 @@
 #include <linux/mm.h>
 #include <linux/spinlock.h>
 #include <linux/compiler.h>
+#include <linux/version.h>
 
 #include <xen/xen.h>
 #include <xen/version.h>
@@ -161,7 +162,11 @@ static int __init uxen_hypercall_init(void)
         printk(KERN_INFO "using uxen hypervisor\n");
 
     if (!uxen_hcbase) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,8,0))
         uxen_hcbase =  __vmalloc(PAGE_SIZE, GFP_KERNEL, PAGE_KERNEL_EXEC);
+#else
+	uxen_hcbase =  __vmalloc(PAGE_SIZE, GFP_KERNEL);
+#endif
         if (!uxen_hcbase) {
             ret = -ENOMEM;
             goto out;

@@ -26,6 +26,7 @@
 #include <linux/timekeeping.h>
 #include <linux/types.h>
 #include <linux/vmstat.h>
+#include <linux/version.h>
 
 #include <uxen-v4vlib.h>
 
@@ -407,10 +408,16 @@ static void vm_handle_request_stat_task(struct vm_diagnostics_context *context, 
  
             task_payload.state = task_state_to_char(task);
             task_payload.num_threads = get_nr_threads(task);
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0))
             task_payload.start_time_nsec = task->real_start_time;
+#else
+            task_payload.start_time_nsec = task->start_boottime;
+#endif
+
             task_payload.last_run_cpu_id = task_cpu(task);
 
-            thread_group_cputime_adjusted(task, &user_nsec, &system_nsec);
+            //thread_group_cputime_adjusted(task, &user_nsec, &system_nsec);
             task_payload.user_nsec = user_nsec;
             task_payload.system_nsec = system_nsec;
 
