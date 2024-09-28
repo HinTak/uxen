@@ -548,7 +548,6 @@ static void __exit uxenstor_exit(void)
     uxen_driver_unregister(&uxenstor_drv);
 }
 
-EXPORT_SYMBOL(uxenstor_init);
 
 module_init(uxenstor_init);
 module_exit(uxenstor_exit);
