@@ -10,6 +10,7 @@
 #include <linux/random.h>
 #include <linux/kthread.h>
 #include <linux/delay.h>
+#include <linux/version.h>
 
 #include <uxen-hypercall.h>
 #include <uxen-platform.h>
@@ -38,14 +39,20 @@ static int bus_probe(struct device *_dev)
     return drv && drv->probe ? drv->probe(dev) : -ENODEV;
 }
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,15,0))
 static int bus_remove(struct device *_dev)
+#else
+static void bus_remove(struct device *_dev)
+#endif
 {
     struct uxen_device *dev = dev_to_uxen(_dev);
     struct uxen_driver *drv = drv_to_uxen(_dev->driver);
 
     if (dev && drv && drv->remove)
        drv->remove(dev);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,15,0))
     return 0;
+#endif
 }
 
 static int bus_suspend(struct device *_dev, pm_message_t state)
