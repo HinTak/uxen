@@ -481,7 +481,7 @@ setup_fb_info(struct fb_info *info, int head)
 
     info->var.activate = FB_ACTIVATE_NOW;
     info->var.vmode = FB_VMODE_NONINTERLACED;
-    info->flags = FBINFO_FLAG_DEFAULT | FBINFO_VIRTFB;
+    info->flags = FBINFO_VIRTFB;
     info->fix.line_length = info->var.xres * info->var.bits_per_pixel / 8;
 
     info->screen_base = ioremap_wc(info->fix.smem_start, info->fix.smem_len);
