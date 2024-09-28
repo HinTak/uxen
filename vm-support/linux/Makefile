@@ -5,11 +5,14 @@
 
 ifneq ($(KERNELRELEASE),)
 # kbuild part of makefile
-else
+include Kbuild
 
-KVERSION ?= $(shell uname -r)
-KDIR := /lib/modules/${KVERSION}/build
+else
+#normal makefile
+KERNEL_VERSION ?= $(shell uname -r)
+KERNEL_SRC ?= /lib/modules/${KERNEL_VERSION}/build
 UXENDIR ?= $(shell pwd)/include/uxen
+INSTALL_HDR_PATH ?= /usr
 
 LX_TARGET_FLAGS= -DLX_TARGET_STANDARDVM
 LX_TARGET_ATTOVM=n
@@ -24,7 +27,9 @@ EXTRA_CFLAGS=$(LX_TARGET_FLAGS) -g -Wall
 NOSTDINC_FLAGS=-I$(shell pwd)/include/ -I$(UXENDIR) -I$(UXENDIR)/xen
 
 all:
-	make -C $(KDIR) $(LX_TARGET) M=$(shell pwd) EXTRA_CFLAGS="$(EXTRA_CFLAGS)" NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)"
+	make -C $(KERNEL_SRC) $(LX_TARGET) M=$(shell pwd) EXTRA_CFLAGS="$(EXTRA_CFLAGS)" NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)"
 clean:
-	make -C $(KDIR) $(LX_TARGET) M=$(shell pwd) clean
+	make -C $(KERNEL_SRC) $(LX_TARGET) M=$(shell pwd) clean
+modules_install:
+	make -C $(KERNEL_SRC) $(LX_TARGET) M=$(shell pwd) modules_install
 endif
