@@ -591,7 +591,6 @@ static const struct proto_ops vsock_dgram_ops = {
     .sendmsg = vsock_sendmsg,
     .recvmsg = vsock_recvmsg,
     .mmap = sock_no_mmap,
-    .sendpage = sock_no_sendpage,
 };
 
 static int vsock_create(struct net *net, struct socket *sock,
