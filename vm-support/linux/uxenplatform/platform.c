@@ -11,6 +11,7 @@
 #include <linux/kthread.h>
 #include <linux/delay.h>
 #include <linux/version.h>
+#include <asm/archrandom.h>
 
 #include <uxen-hypercall.h>
 #include <uxen-platform.h>
@@ -113,8 +114,8 @@ void uxen_driver_unregister(struct uxen_driver *drv)
 }
 EXPORT_SYMBOL_GPL(uxen_driver_unregister);
 
-extern void add_hwgenerator_randomness(const char *buffer, size_t count,
-    size_t entropy);
+extern void add_hwgenerator_randomness(const void *buffer, size_t count,
+    size_t entropy, bool sleep_after);
 
 /* fill entropy pool with RDRAND values */
 static int
@@ -127,18 +128,18 @@ uxen_entropy_thread(void *data)
         unsigned long v;
         if (use_rdseed) {
             for (i = 0; i < RDSEED_RETRY; i++)
-                if (arch_get_random_seed_long(&v)) {
+                if (arch_get_random_seed_longs(&v, 1)) {
                     got = 1;
                     break;
                 }
         } else if (use_rdrand) {
-            got = arch_get_random_long(&v);
+            got = arch_get_random_longs(&v, 1);
         } else {
             v = rdtsc(); /* bad quality seed, just for debugging under uxen */
             got = 1;
         }
         if (got) {
-            add_hwgenerator_randomness((const char*)&v, sizeof(v), sizeof(v)*8);
+            add_hwgenerator_randomness((const char*)&v, sizeof(v), sizeof(v)*8, true);
         } else {
             printk(KERN_WARNING "failed to acquire entropy bits, retrying");
             mdelay(1);
