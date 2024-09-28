@@ -115,7 +115,9 @@ static void uxenstor_softirq(unsigned long opaque)
                                          sc->sense_buffer,
                                          sizeof(hdr) + hdr.sense_size,
                                          0, sizeof(hdr));
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,14,0))
                 set_driver_byte(sc, DRIVER_SENSE);
+#endif
             }
 
             set_host_byte(sc, DID_ERROR);
